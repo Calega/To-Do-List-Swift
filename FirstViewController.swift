@@ -10,7 +10,9 @@ import UIKit
 
 class FirstViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    var items:NSMutableArray = []
+    @IBOutlet weak var table: UITableView!
+    
+    var items:[String] = []
     
     internal func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
@@ -24,7 +26,7 @@ class FirstViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
         var cellLabel = ""
         
-        if let tempLabel = items[indexPath.row] as? String {
+        if let tempLabel = items[indexPath.row] {
             
             cellLabel = tempLabel
             
@@ -35,17 +37,35 @@ class FirstViewController: UIViewController, UITableViewDelegate, UITableViewDat
         return cell
         
     }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    
+    override func viewDidAppear(_ animated: Bool) {
         
         let itemObject = UserDefaults.standard.object(forKey: "items")
-    
-        if let tempItems = itemObject as? NSMutableArray {
+        
+        if let tempItems = itemObject as? [String] {
             
             items = tempItems
             
-        } 
+        }
+        
+        table.reloadData()
+        
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        
+        if editingStyle == UITableViewCellEditingStyle.delete {
+            items.remove(at: indexPath.row)
+            
+            table.reloadData()
+            
+            UserDefaults.standard.set(items, forKey: "items")
+        }
+        
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
 
     }
 
